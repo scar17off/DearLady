@@ -31,7 +31,7 @@ module.exports = {
                 .setColor(0xA312ED)
                 .setTitle('Gender Statistics')
                 .addFields(genderStats)
-                .setFooter({ text: 'Use /gender to set your gender', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+                .setFooter({ text: 'Use /gender to set your gender' });
 
             db.close();
             interaction.reply({ embeds: [embed], ephemeral: true });
