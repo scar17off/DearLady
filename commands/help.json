@@ -23,7 +23,8 @@
         { "description": "Checks XP and level of a user", "usage": "/rank [user]", "category": "Utility" },
         { "description": "Removes XP from a user", "usage": "/xp add [user] [amount]\n/xp remove [user] [amount]", "category": "Utility" },
         { "description": "Adds a level to a user", "usage": "/level add [user] [amount]\n/level remove [user] [amount]", "category": "Utility" },
-        { "description": "Crafts items", "usage": "/craft [first] [second]", "category": "Fun" }
+        { "description": "Crafts items", "usage": "/craft [first] [second]", "category": "Fun" },
+        { "description": "Get an invite link to the creator's Discord server", "usage": "/invite", "category": "Utility" }
     ],
     "categories": {
         "Utility": "🛠️",
