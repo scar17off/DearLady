@@ -27,6 +27,10 @@ module.exports = {
         const serverId = interaction.guild.id;
         const action = interaction.options.getSubcommand();
 
+        if (!interaction.member.permissions.has('ADMINISTRATOR')) {
+            return interaction.reply({ content: 'You do not have permission to manage XP.', ephemeral: true });
+        }
+
         db.get(`SELECT xp, level FROM user_xp WHERE user_id = ? AND server_id = ?`, [user.id, serverId], (err, row) => {
             if (err) {
                 db.close();
