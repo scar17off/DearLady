@@ -1,0 +1,21 @@
+{
+	"dependencies": {
+		"@discordjs/builders": "^1.8.0",
+		"@discordjs/rest": "^2.3.0",
+		"axios": "^1.6.8",
+		"discord-api-types": "^0.37.83",
+		"discord.js": "^14.15.1",
+		"dotenv": "^16.4.5",
+		"sqlite3": "^5.1.7"
+	},
+	"name": "dearlady",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"keywords": [],
+	"author": "scar17off",
+	"license": "ISC",
+	"description": "A bot that can do things"
+}

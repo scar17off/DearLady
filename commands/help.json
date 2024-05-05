@@ -1,0 +1,33 @@
+{
+    "commands": [
+        { "description": "Finds the definition of a word", "usage": "/define [word]", "category": "Utility" },
+        { "description": "Processes text with the Asparagus API", "usage": "/asparagus [text]", "category": "Utility" },
+        { "description": "Clears a specified amount of messages", "usage": "/clear [amount]", "category": "Moderation" },
+        { "description": "Sets or gets a user's birthday", "usage": "/birthday set [date]\n/birthday get [user]", "category": "Utility" },
+        { "description": "Displays information about a user", "usage": "/user mention [user]\n/user id [id]", "category": "Utility" },
+        { "description": "Displays help information for commands", "usage": "/help", "category": "Utility" },
+        { "description": "Pings the bot", "usage": "/ping", "category": "Utility" },
+        { "description": "Displays information about the server", "usage": "/server", "category": "Utility" },
+        { "description": "Owoifies text", "usage": "/owoify [text]", "category": "Fun" },
+        { "description": "Kicks a user", "usage": "/kick [user]", "category": "Moderation" },
+        { "description": "Bans a user", "usage": "/ban [user]", "category": "Moderation" },
+        { "description": "Purges a specified amount of messages", "usage": "/purge [user] [amount]", "category": "Moderation" },
+        { "description": "Makes the bot say something", "usage": "/say [text]", "category": "Fun" },
+        { "description": "Displays a user's avatar", "usage": "/avatar [user]", "category": "Utility" },
+        { "description": "Clears a specified amount of messages", "usage": "/clear [amount]", "category": "Moderation" },
+        { "description": "Flips a coin", "usage": "/flip", "category": "Fun" },
+        { "description": "Rolls a dice", "usage": "/roll [sides=6]", "category": "Fun" },
+        { "description": "Plays rock paper scissors", "usage": "/rps", "category": "Fun" },
+        { "description": "Locks the channel", "usage": "/lock", "category": "Moderation" },
+        { "description": "Unlocks the channel", "usage": "/unlock", "category": "Moderation" },
+        { "description": "Checks XP and level of a user", "usage": "/rank [user]", "category": "Utility" },
+        { "description": "Removes XP from a user", "usage": "/xp add [user] [amount]\n/xp remove [user] [amount]", "category": "Utility" },
+        { "description": "Adds a level to a user", "usage": "/level add [user] [amount]\n/level remove [user] [amount]", "category": "Utility" },
+        { "description": "Crafts items", "usage": "/craft [first] [second]", "category": "Fun" }
+    ],
+    "categories": {
+        "Utility": "🛠️",
+        "Moderation": "🛡️",
+        "Fun": "😝"
+    }
+}
