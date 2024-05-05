@@ -23,7 +23,7 @@ module.exports = {
                 .setDescription('The length of the continuation')
                 .setRequired(false)),
     async execute(interaction) {
-        const prompt = interaction.options.getString('prompt');
+        const prompt = interaction.options.getString('prompt').trim();
         const model = interaction.options.getString('model') || 'xlarge';
         const length = interaction.options.getInteger('length') || 30;
 
@@ -46,7 +46,8 @@ module.exports = {
                 .setTitle('Generated Continuations')
                 .addFields(
                     replies.map((reply, index) => ({ name: `Continuation #${index + 1}`, value: `${prompt} ${reply}` }))
-                );
+                )
+                .setFooter({ text: 'Porfirevich | The bot is not responsible for the generated content.', iconURL: 'https://porfirevich.com/assets/favicon-32x32.png' })
 
             await interaction.reply({ embeds: [embed] });
         } catch (error) {
