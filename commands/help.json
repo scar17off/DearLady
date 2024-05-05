@@ -17,7 +17,7 @@
         { "description": "Clears a specified amount of messages", "usage": "/clear [amount]", "category": "Moderation" },
         { "description": "Flips a coin", "usage": "/flip", "category": "Fun" },
         { "description": "Rolls a dice", "usage": "/roll [sides=6]", "category": "Fun" },
-        { "description": "Plays rock paper scissors", "usage": "/rps", "category": "Fun" },
+        { "description": "Plays rock paper scissors", "usage": "/rps [user]", "category": "Fun" },
         { "description": "Locks the channel", "usage": "/lock", "category": "Moderation" },
         { "description": "Unlocks the channel", "usage": "/unlock", "category": "Moderation" },
         { "description": "Checks XP and level of a user", "usage": "/rank [user]", "category": "Utility" },

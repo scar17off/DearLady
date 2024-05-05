@@ -4,8 +4,15 @@ const { ActionRowBuilder, SelectMenuBuilder, EmbedBuilder } = require('discord.j
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('rps')
-        .setDescription('Play Rock-Paper-Scissors game'),
+        .setDescription('Play Rock-Paper-Scissors game')
+        .addUserOption(option => 
+            option.setName('user')
+                .setDescription('Choose a user to play with')
+                .setRequired(false)),
     async execute(interaction) {
+        const opponent = interaction.options.getUser('user');
+        const isBot = !opponent;
+
         const row = new ActionRowBuilder()
             .addComponents(
                 new SelectMenuBuilder()
@@ -30,19 +37,38 @@ module.exports = {
                     ]),
             );
 
-        await interaction.reply({ content: 'Choose rock, paper, or scissors!', components: [row], ephemeral: true });
+        const gameMessage = isBot ? 'Choose rock, paper, or scissors!' : `You are playing against ${opponent.username}. Choose rock, paper, or scissors!`;
+        const ephemeralStatus = isBot;
 
-        const filter = i => i.user.id === interaction.user.id;
-        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 15000 });
+        await interaction.reply({ content: gameMessage, components: [row], ephemeral: ephemeralStatus });
+
+        const filter = i => i.user.id === interaction.user.id || (opponent && i.user.id === opponent.id);
+        const collector = interaction.channel.createMessageComponentCollector({ filter, time: 30000 });
+
+        const selections = {};
 
         collector.on('collect', async i => {
             if (i.customId === 'select') {
-                const userChoice = i.values[0];
-                const choices = ['rock', 'paper', 'scissors'];
-                const botChoice = choices[Math.floor(Math.random() * choices.length)];
-                const result = checkWinner(userChoice, botChoice);
+                selections[i.user.id] = i.values[0];
+                await i.deferUpdate();
 
-                await i.update({ content: `You chose ${userChoice} 🆚 Bot chose ${botChoice}\n${result}`, components: [] });
+                if (selections[interaction.user.id] && !isBot) {
+                    const opponentMessage = await interaction.followUp({ content: `Hey ${opponent.username}, it's your turn to choose rock, paper, or scissors!`, components: [row], ephemeral: false });
+                }
+
+                if (isBot || (selections[interaction.user.id] && selections[opponent.id])) {
+                    const userChoice = selections[interaction.user.id];
+                    const opponentChoice = isBot ? ['rock', 'paper', 'scissors'][Math.floor(Math.random() * 3)] : selections[opponent.id];
+                    const result = checkWinner(userChoice, opponentChoice);
+
+                    const resultMessage = isBot ? 
+                        `You chose ${userChoice} 🆚 Bot chose ${opponentChoice}\n${result}` :
+                        `You chose ${userChoice} 🆚 ${opponent.username} chose ${opponentChoice}\n${result}`;
+
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await interaction.editReply({ content: resultMessage, components: [] });
+                    collector.stop();
+                }
             }
         });
 
@@ -52,10 +78,10 @@ module.exports = {
             }
         });
 
-        function checkWinner(user, bot) {
-            if (user === bot) {
+        function checkWinner(user, opponent) {
+            if (user === opponent) {
                 return "It's a tie! 🤝";
-            } else if ((user === 'rock' && bot === 'scissors') || (user === 'paper' && bot === 'rock') || (user === 'scissors' && bot === 'paper')) {
+            } else if ((user === 'rock' && opponent === 'scissors') || (user === 'paper' && opponent === 'rock') || (user === 'scissors' && opponent === 'paper')) {
                 return "You win! 🎉";
             } else {
                 return "You lose! 😢";
