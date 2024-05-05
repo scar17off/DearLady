@@ -21,6 +21,10 @@ module.exports = {
             if (!dateRegex.test(date)) {
                 return interaction.reply({ content: 'Invalid date format. Please use YYYY-MM-DD.', ephemeral: true });
             }
+            const year = parseInt(date.split('-')[0]);
+            if (year < 1980) {
+                return interaction.reply({ content: 'Invalid year. Year must be 1980 or later.', ephemeral: true });
+            }
             db.run(`INSERT INTO users (user_id, username, birthday) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET birthday = ?`,
                 [interaction.user.id, interaction.user.username, date, date],
                 function(err) {
