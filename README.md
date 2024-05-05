@@ -11,7 +11,7 @@ DearLady is a versatile Discord bot capable of performing a variety of tasks ran
 To install DearLady, you will need to have Node.js and npm installed on your system. Clone the repository, install the dependencies, configure the bot, and run the bot using the following commands:
 ```bash
 git clone https://github.com/scar17off/DearLady.git
-cd dear-lady
+cd DearLady
 npm install
 npm start
 ```
