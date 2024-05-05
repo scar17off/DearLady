@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { ActionRowBuilder, SelectMenuBuilder } = require('discord.js');
+const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
 
         const row = new ActionRowBuilder()
             .addComponents(
-                new SelectMenuBuilder()
+                new StringSelectMenuBuilder()
                     .setCustomId('select')
                     .setPlaceholder('Choose your weapon')
                     .addOptions([
