@@ -23,7 +23,8 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", () => {
-    client.user.setActivity(`over ${client.guilds.cache.size} servers`, { type: ActivityType.Watching });
+    const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+    client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
 });
 
 client.on("messageCreate", async message => {
