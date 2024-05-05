@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { PermissionFlagsBits } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 
@@ -26,7 +27,7 @@ module.exports = {
         const serverId = interaction.guild.id;
         const action = interaction.options.getSubcommand();
 
-        if (!interaction.member.permissions.has('ADMINISTRATOR')) {
+        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
             return interaction.reply({ content: 'You do not have permission to manage XP.', ephemeral: true });
         }
 
