@@ -1,5 +1,5 @@
 const fs = require("fs");
-const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+const commandFiles = fs.readdirSync("./commands", { recursive: true }).filter(file => file.endsWith(".js"));
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 const { Client, GatewayIntentBits, ActivityType } = require("discord.js");

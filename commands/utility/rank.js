@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
-const config = require('../config.json');
+const config = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()

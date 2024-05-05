@@ -4,7 +4,7 @@ const fs = require('node:fs');
 require("dotenv").config("./.env");
 
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands', { recursive: true }).filter(file => file.endsWith('.js'));
 
 const clientId = '976708694899326986';
 
