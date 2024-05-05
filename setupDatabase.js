@@ -14,7 +14,8 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
         username TEXT NOT NULL,
-        birthday DATE
+        birthday DATE,
+        gender TEXT
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS user_xp (

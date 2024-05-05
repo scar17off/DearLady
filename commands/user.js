@@ -24,27 +24,27 @@ module.exports = {
             const userId = interaction.options.getString('userid');
             member = await interaction.guild.members.fetch(userId);
         }
-    
+        
         if (!member) {
             db.close();
             return interaction.reply({ content: 'User not found.', ephemeral: true });
         }
-    
-        db.get(`SELECT birthday FROM users WHERE user_id = ?`, [member.id], async (err, row) => {
+        
+        db.get(`SELECT birthday, gender FROM users WHERE user_id = ?`, [member.id], async (err, row) => {
             if (err) {
                 db.close();
-                return interaction.reply({ content: 'Failed to retrieve birthday.', ephemeral: true });
+                return interaction.reply({ content: 'Failed to retrieve user data.', ephemeral: true });
             }
-    
-            const birthday = row ? new Date(row.birthday).toDateString() : 'N/A';
-    
+            
+            const birthday = row && row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
+            const genderEmoji = row && row.gender === 'male' ? '♂️' : row && row.gender === 'female' ? '♀️' : row && row.gender === 'non-binary' ? '⚧️' : '❓';
+            
             const embed = new EmbedBuilder()
                 .setColor(0xA312ED)
-                .setTitle('User Information')
+                .setTitle(`User Information ${genderEmoji}`)
                 .setThumbnail(member.user.displayAvatarURL())
                 .addFields(
-                    { name: 'Username', value: member.user.username, inline: true },
-                    { name: 'Discriminator', value: member.user.discriminator === '0' ? 'N/A' : `#${member.user.discriminator}`, inline: true },
+                    { name: 'Username', value: `${member.user.username}${member.user.discriminator !== '0' ? `#${member.user.discriminator}` : ''}`, inline: true },
                     { name: 'ID', value: member.user.id, inline: false },
                     { name: 'Created At', value: member.user.createdAt.toDateString(), inline: false },
                     { name: 'Joined At', value: member.joinedAt.toDateString(), inline: false },
