@@ -26,6 +26,11 @@ db.serialize(() => {
         PRIMARY KEY (user_id, server_id),
         FOREIGN KEY (user_id) REFERENCES users(user_id)
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS command_usage (
+        command TEXT PRIMARY KEY,
+        count INTEGER DEFAULT 0 NOT NULL
+    )`);
 });
 
 db.close();

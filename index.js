@@ -54,13 +54,27 @@ client.on("messageCreate", async message => {
     }
 });
 
-client.on("interactionCreate", async interaction => {
+client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
-    const command = commands.get(interaction.commandName);
+    const { commandName } = interaction;
 
-    if (command) {
+    const command = commands.get(commandName);
+    if (!command) return;
+
+    try {
         await command.execute(interaction);
+
+        db.run(`INSERT INTO command_usage (command, count) VALUES (?, 1)
+                ON CONFLICT(command) DO UPDATE SET count = count + 1 WHERE command = ?`, [commandName, commandName], function(err) {
+            if (err) {
+                return console.error('Database error:', err.message);
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
 
