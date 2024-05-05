@@ -26,41 +26,47 @@ module.exports = {
         }
         
         if (!member) {
-            db.close();
-            return interaction.reply({ content: 'User not found.', ephemeral: true });
-        }
-        
-        db.get(`SELECT birthday, gender FROM users WHERE user_id = ?`, [member.id], async (err, row) => {
-            if (err) {
+            db.get(`SELECT birthday, gender FROM users WHERE user_id = ?`, [member.id], async (err, row) => {
+                if (!row) {
+                    db.run(`INSERT INTO users (user_id) VALUES (?)`, [member.id], (err) => {
+                        if (err) {
+                            db.close();
+                            return interaction.reply({ content: 'Failed to create user in database.', ephemeral: true });
+                        }
+                    });
+                }
+                
+                if (err) {
+                    db.close();
+                    return interaction.reply({ content: 'Failed to retrieve user data.', ephemeral: true });
+                }
+                
+                const birthday = row && row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
+                const genderEmoji = row && row.gender === 'male' ? '♂️' : row && row.gender === 'female' ? '♀️' : row && row.gender === 'non-binary' ? '⚧️' : '❓';
+                
+                const embed = new EmbedBuilder()
+                    .setColor(0xA312ED)
+                    .setTitle(`User Information ${genderEmoji}`)
+                    .setThumbnail(member.user.displayAvatarURL())
+                    .addFields(
+                        { name: 'Username', value: `${member.user.username}${member.user.discriminator !== '0' ? `#${member.user.discriminator}` : ''}`, inline: true },
+                        { name: 'ID', value: member.user.id, inline: false },
+                        { name: 'Created At', value: member.user.createdAt.toDateString(), inline: false },
+                        { name: 'Joined At', value: member.joinedAt.toDateString(), inline: false },
+                        { name: 'Birthday', value: birthday, inline: false },
+                        { 
+                            name: "Roles", 
+                            value: member.roles.cache.filter(role => role.name !== '@everyone').map(role => `<@&${role.id}>`).join(', ') || 'N/A', 
+                            inline: false 
+                        },
+                        { name: "Owner", value: member.guild.ownerId === member.id ? 'Yes' : 'No', inline: true }
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: 'User Info', iconURL: member.user.displayAvatarURL() });
+
                 db.close();
-                return interaction.reply({ content: 'Failed to retrieve user data.', ephemeral: true });
-            }
-            
-            const birthday = row && row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
-            const genderEmoji = row && row.gender === 'male' ? '♂️' : row && row.gender === 'female' ? '♀️' : row && row.gender === 'non-binary' ? '⚧️' : '❓';
-            
-            const embed = new EmbedBuilder()
-                .setColor(0xA312ED)
-                .setTitle(`User Information ${genderEmoji}`)
-                .setThumbnail(member.user.displayAvatarURL())
-                .addFields(
-                    { name: 'Username', value: `${member.user.username}${member.user.discriminator !== '0' ? `#${member.user.discriminator}` : ''}`, inline: true },
-                    { name: 'ID', value: member.user.id, inline: false },
-                    { name: 'Created At', value: member.user.createdAt.toDateString(), inline: false },
-                    { name: 'Joined At', value: member.joinedAt.toDateString(), inline: false },
-                    { name: 'Birthday', value: birthday, inline: false },
-                    { 
-                        name: "Roles", 
-                        value: member.roles.cache.filter(role => role.name !== '@everyone').map(role => `<@&${role.id}>`).join(', ') || 'N/A', 
-                        inline: false 
-                    },
-                    { name: "Owner", value: member.guild.ownerId === member.id ? 'Yes' : 'No', inline: true }
-                )
-                .setTimestamp()
-                .setFooter({ text: 'User Info', iconURL: member.user.displayAvatarURL() });
-    
-            db.close();
-            await interaction.reply({ embeds: [embed], ephemeral: true });
-        });
+                await interaction.reply({ embeds: [embed], ephemeral: true });
+            });
+        }
     }
 }
