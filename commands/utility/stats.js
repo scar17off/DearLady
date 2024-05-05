@@ -21,11 +21,15 @@ module.exports = {
             }
 
             const total = rows.reduce((acc, row) => acc + row.count, 0);
-            const genderStats = rows.map(row => ({
-                name: row.gender.charAt(0).toUpperCase() + row.gender.slice(1) + (row.gender === 'male' ? ' ♂️' : row.gender === 'female' ? ' ♀️' : row.gender === 'non-binary' ? ' ⚧️' : ' ❓'),
-                value: `${row.count} (${((row.count / total) * 100).toFixed(2)}%)`,
-                inline: true
-            })).sort((a, b) => b.value.localeCompare(a.value));
+            const genderStats = rows.map(row => {
+                const genderName = row.gender ? row.gender.charAt(0).toUpperCase() + row.gender.slice(1) : 'Unknown';
+                const genderIcon = row.gender === 'male' ? ' ♂️' : row.gender === 'female' ? ' ♀️' : row.gender === 'non-binary' ? ' ⚧️' : ' ❓';
+                return {
+                    name: genderName + genderIcon,
+                    value: `${row.count} (${((row.count / total) * 100).toFixed(2)}%)`,
+                    inline: true
+                };
+            }).sort((a, b) => b.value.localeCompare(a.value));
 
             const embed = new EmbedBuilder()
                 .setColor(0xA312ED)

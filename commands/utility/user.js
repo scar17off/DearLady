@@ -17,39 +17,42 @@ module.exports = {
                 .addStringOption(option => option.setName('userid').setDescription('The user ID to get info').setRequired(true))),
     async execute(interaction) {
         let member;
-        if (interaction.options.getSubcommand() === 'mention') {
-            const user = interaction.options.getUser('user');
-            member = await interaction.guild.members.fetch(user.id);
-        } else if (interaction.options.getSubcommand() === 'id') {
-            const userId = interaction.options.getString('userid');
-            member = await interaction.guild.members.fetch(userId);
-        }
-        
-        if (!member) {
+        try {
+            if (interaction.options.getSubcommand() === 'mention') {
+                const user = interaction.options.getUser('user');
+                member = await interaction.guild.members.fetch(user.id);
+            } else if (interaction.options.getSubcommand() === 'id') {
+                const userId = interaction.options.getString('userid');
+                member = await interaction.guild.members.fetch(userId);
+            }
+
+            if (!member) {
+                return interaction.reply({ content: 'User not found in this guild.', ephemeral: true });
+            }
+
             db.get(`SELECT birthday, gender FROM users WHERE user_id = ?`, [member.id], async (err, row) => {
-                if (!row) {
-                    db.run(`INSERT INTO users (user_id) VALUES (?)`, [member.id], (err) => {
-                        if (err) {
-                            db.close();
-                            return interaction.reply({ content: 'Failed to create user in database.', ephemeral: true });
-                        }
-                    });
-                }
-                
                 if (err) {
-                    db.close();
+                    console.error(err);
                     return interaction.reply({ content: 'Failed to retrieve user data.', ephemeral: true });
                 }
-                
-                const birthday = row && row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
-                const genderEmoji = row && row.gender === 'male' ? '♂️' : row && row.gender === 'female' ? '♀️' : row && row.gender === 'non-binary' ? '⚧️' : '❓';
-                
+
+                if (!row) {
+                    return interaction.reply({ content: 'No additional information available for this user.', ephemeral: true });
+                }
+
+                const birthday = row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
+                const genderEmoji = {
+                    'male': '♂️',
+                    'female': '♀️',
+                    'non-binary': '⚧️'
+                }[row.gender] || '❓';
+
                 const embed = new EmbedBuilder()
                     .setColor(0xA312ED)
                     .setTitle(`User Information ${genderEmoji}`)
                     .setThumbnail(member.user.displayAvatarURL())
                     .addFields(
-                        { name: 'Username', value: `${member.user.username}${member.user.discriminator !== '0' ? `#${member.user.discriminator}` : ''}`, inline: true },
+                        { name: 'Username', value: `${member.user.username}#${member.user.discriminator}`, inline: true },
                         { name: 'ID', value: member.user.id, inline: false },
                         { name: 'Created At', value: member.user.createdAt.toDateString(), inline: false },
                         { name: 'Joined At', value: member.joinedAt.toDateString(), inline: false },
@@ -64,9 +67,11 @@ module.exports = {
                     .setTimestamp()
                     .setFooter({ text: 'User Info', iconURL: member.user.displayAvatarURL() });
 
-                db.close();
                 await interaction.reply({ embeds: [embed], ephemeral: true });
             });
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred while fetching user data.', ephemeral: true });
         }
     }
 }
