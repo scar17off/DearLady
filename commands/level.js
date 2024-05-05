@@ -39,7 +39,7 @@ module.exports = {
                 }
             } else {
                 let newLevel = action === 'add' ? row.level + amount : row.level - amount;
-                if (newLevel < 1) newLevel = 1;  Prevent level going below 1
+                if (newLevel < 1) newLevel = 1; // Prevent level going below 1
 
                 db.run(`UPDATE user_xp SET level = ? WHERE user_id = ? AND server_id = ?`, [newLevel, user.id, serverId]);
             }
