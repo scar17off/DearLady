@@ -31,18 +31,21 @@ module.exports = {
             prompt: prompt,
             model: model,
             length: length
-        };
+        }
 
         try {
             const response = await axios.post('https://api.porfirevich.com/generate/', requestBody);
             const replies = response.data.replies;
 
+            if (!replies || replies.length === 0) {
+                throw new Error('No replies received from the API.');
+            }
+
             const embed = new EmbedBuilder()
-                .setColor(0x0099FF)
+                .setColor(0xA312ED)
                 .setTitle('Generated Continuations')
-                .setDescription(`Prompt: ${prompt}`)
                 .addFields(
-                    replies.map((reply, index) => ({ name: `Continuation ${index + 1}`, value: reply }))
+                    replies.map((reply, index) => ({ name: `Continuation #${index + 1}`, value: `${prompt} ${reply}` }))
                 );
 
             await interaction.reply({ embeds: [embed] });
