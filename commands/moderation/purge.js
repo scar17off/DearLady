@@ -18,8 +18,7 @@ module.exports = {
             return interaction.reply({ content: 'You do not have permission to purge messages.', ephemeral: true });
         }
 
-        const botPermissionsIn = interaction.guild.me.permissionsIn(interaction.channel);
-        if (!botPermissionsIn.has(PermissionsBitField.Flags.ManageMessages)) {
+        if (!interaction.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
             return interaction.reply({ content: 'I do not have permission to clear messages in this channel.', ephemeral: true });
         }
 

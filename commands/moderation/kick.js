@@ -21,6 +21,13 @@ module.exports = {
             return interaction.reply({ embeds: [embed], ephemeral: true });
         }
 
+        if (!interaction.guild.members.me.permissions.has(PermissionsBitField.Flags.KickMembers)) {
+            const embed = new EmbedBuilder()
+                .setColor(0xA312ED)
+                .setDescription('I do not have permission to kick members.');
+            return interaction.reply({ embeds: [embed], ephemeral: true });
+        }
+
         const user = interaction.options.getUser('user');
         const reason = interaction.options.getString('reason') || 'No reason provided';
 

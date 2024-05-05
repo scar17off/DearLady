@@ -9,6 +9,10 @@ module.exports = {
             return interaction.reply({ content: 'You do not have permission to lock channels.', ephemeral: true });
         }
 
+        if (!interaction.guild.members.me.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+            return interaction.reply({ content: 'I do not have permission to lock channels.', ephemeral: true });
+        }
+
         const channel = interaction.channel;
         await channel.permissionOverwrites.edit(interaction.guild.roles.everyone, {
             SendMessages: false,
