@@ -6,17 +6,17 @@ const maximumIngredients = 5;
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('craft')
-        .setDescription('Crafts a new item using ingredients separated by " + ". You can combine up to 5 ingredients.')
+        .setDescription('Crafts a new item using ingredients. You can combine up to 5 ingredients.')
         .addStringOption(option =>
             option.setName('ingredients')
-                .setDescription('List of ingredients separated by " + "')
+                .setDescription('List of ingredients separated by "+" or simply concatenated')
                 .setRequired(true)),
     async execute(interaction) {
         const ingredientsInput = interaction.options.getString('ingredients');
-        const ingredients = ingredientsInput.split(' + ').slice(0, maximumIngredients);
+        const ingredients = ingredientsInput.split(/ *\+ */).slice(0, maximumIngredients);
 
         if (ingredients.length < 2) {
-            return interaction.reply({ content: 'Please provide at least two ingredients separated by " + ".', ephemeral: true });
+            return interaction.reply({ content: 'Please provide at least two ingredients, separated by "+" or concatenated directly.', ephemeral: true });
         }
 
         try {
