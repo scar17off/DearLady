@@ -14,14 +14,26 @@ db.serialize(() => {
         goodbye_message TEXT,
         welcome_enabled BOOLEAN DEFAULT FALSE,
         goodbye_enabled BOOLEAN DEFAULT FALSE
-    )`);
+    )`, (err) => {
+        if (err) {
+            console.error("Failed to ensure 'servers' table exists:", err.message);
+        } else {
+            console.log("'servers' table is ready.");
+        }
+    });
 
     db.run(`CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
         username TEXT NOT NULL,
         birthday DATE,
         gender TEXT
-    )`);
+    )`, (err) => {
+        if (err) {
+            console.error("Failed to ensure 'users' table exists:", err.message);
+        } else {
+            console.log("'users' table is ready.");
+        }
+    });
 
     db.run(`CREATE TABLE IF NOT EXISTS user_xp (
         user_id TEXT NOT NULL,
@@ -30,12 +42,24 @@ db.serialize(() => {
         level INTEGER DEFAULT 1,
         PRIMARY KEY (user_id, server_id),
         FOREIGN KEY (user_id) REFERENCES users(user_id)
-    )`);
+    )`, (err) => {
+        if (err) {
+            console.error("Failed to ensure 'user_xp' table exists:", err.message);
+        } else {
+            console.log("'user_xp' table is ready.");
+        }
+    });
 
     db.run(`CREATE TABLE IF NOT EXISTS command_usage (
         command TEXT PRIMARY KEY,
         count INTEGER DEFAULT 0 NOT NULL
-    )`);
+    )`, (err) => {
+        if (err) {
+            console.error("Failed to ensure 'command_usage' table exists:", err.message);
+        } else {
+            console.log("'command_usage' table is ready.");
+        }
+    });
 });
 
 db.close();

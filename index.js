@@ -30,6 +30,7 @@ function setActivity() {
 }
 
 client.on(Events.ClientReady, () => {
+    console.log("Bot is ready");
     require("./server.js");
     setActivity();
     setInterval(setActivity, 600000); // 600000 milliseconds = 10 minutes
