@@ -3,7 +3,7 @@ const commandFiles = fs.readdirSync("./commands", { recursive: true }).filter(fi
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 const { Client, GatewayIntentBits, ActivityType } = require("discord.js");
-require("dotenv").config("./.env");
+require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
 require("./setupDatabase.js");
 const config = require("./config.json");
@@ -24,6 +24,7 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", () => {
+    require("./server.js");
     const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
     client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
 });

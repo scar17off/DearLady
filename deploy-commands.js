@@ -1,7 +1,7 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const fs = require('node:fs');
-require("dotenv").config("./.env");
+require("dotenv").config();
 
 const commands = [];
 const commandFiles = fs.readdirSync('./commands', { recursive: true }).filter(file => file.endsWith('.js'));
