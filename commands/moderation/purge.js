@@ -5,6 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('purge')
         .setDescription('Purges a specified number of messages from a user')
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('The user whose messages to purge')

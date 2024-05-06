@@ -3,7 +3,8 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('disc
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('lock')
-        .setDescription('Locks the channel to prevent others from sending messages or adding reactions.'),
+        .setDescription('Locks the channel to prevent others from sending messages or adding reactions.')
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageChannels),
     async execute(interaction) {
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
             return interaction.reply({ content: 'You do not have permission to lock channels.', ephemeral: true });

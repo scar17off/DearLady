@@ -5,6 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Clears a specified amount of messages')
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addIntegerOption(option =>
             option.setName('amount')
                 .setDescription('The number of messages to clear')

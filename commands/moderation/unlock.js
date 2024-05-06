@@ -3,8 +3,9 @@ const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField } = require('disc
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('unlock')
-        .setDescription('Unlocks the channel to allow others to send messages or add reactions.'),
-    async execute(interaction) {
+        .setDescription('Unlocks the channel to allow others to send messages or add reactions.')
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageChannels),
+        async execute(interaction) {
         if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageChannels)) {
             return interaction.reply({ content: 'You do not have permission to unlock channels.', ephemeral: true });
         }

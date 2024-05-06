@@ -5,6 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('move')
         .setDescription('Move a user to a different voice channel')
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.MoveMembers)
         .addUserOption(option =>
             option.setName('user')
                 .setDescription('The user to move')
