@@ -3,6 +3,7 @@ const commandFiles = fs.readdirSync("./commands", { recursive: true }).filter(fi
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 const { Client, GatewayIntentBits, ActivityType, Events } = require("discord.js");
+const { EventEmitterAsyncResource } = require("events");
 require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
 require("./setupDatabase.js");
@@ -125,11 +126,23 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 client.on(Events.GuildCreate, async guild => {
-    db.run(`INSERT INTO servers (server_id, welcome_enabled, goodbye_enabled) VALUES (?, ?, ?)`, [
-        guild.id,
-        false,
-        false
-    ]);
+    db.run(`INSERT INTO servers (server_id) VALUES (?) ON CONFLICT(server_id) DO NOTHING`, [guild.id], (err) => {
+        if (err) {
+            console.error('Database error when inserting new server:', err);
+        } else {
+            console.log(`New server added or already exists in the database with ID: ${guild.id}`);
+        }
+    });
+});
+
+client.on(Events.GuildDelete, async guild => {
+    db.run(`DELETE FROM servers WHERE server_id = ?`, [guild.id], (err) => {
+        if (err) {
+            console.error('Database error when deleting server:', err);
+        } else {
+            console.log(`Server with ID ${guild.id} removed from the database`);
+        }
+    });
 });
 
 client.login(process.env.token);
