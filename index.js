@@ -26,8 +26,10 @@ for (const file of commandFiles) {
 
 client.on("ready", () => {
     require("./server.js");
-    const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
-    client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
+    setInterval(() => {
+        const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+        client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
+    }, 600000); // 600000 milliseconds = 10 minutes
 });
 
 client.on("messageCreate", async message => {
