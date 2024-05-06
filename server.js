@@ -73,4 +73,10 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('/');
 }
 
+app.get('/bot-status', (req, res) => {
+    const totalServers = client.guilds.cache.size;
+    const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+    res.json({ servers: totalServers, members: totalMembers });
+});
+
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

@@ -16,6 +16,7 @@ const client = new Client({
         GatewayIntentBits.GuildVoiceStates
     ]
 });
+global.client = client;
 
 const commands = new Map();
 for (const file of commandFiles) {

@@ -7,3 +7,101 @@ html, body {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+:root {
+    --container-bg-color: #2B2D31;
+    --topbar-bg-color: #282A2E;
+    --inactive-text-color: #949BA0;
+}
+
+@font-face {
+    font-family: 'whitney-medium';
+    src: url('/login/font/whitney-medium.ttf') format('truetype');
+}
+
+* {
+    font-family: whitney medium;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    height: 620px;
+    background-color: var(--container-bg-color);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 16px;
+}
+
+.top {
+    width: 100%;
+    height: 50px;
+    background-color: var(--topbar-bg-color);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top label {
+    color: white;
+    font-size: 20px;
+    margin: 0;
+}
+
+.container-content {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+
+.centered {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.container-content label {
+    color: var(--inactive-text-color);
+    font-size: 16px;
+}
+
+.container-content ol, .container-content ul {
+    color: var(--inactive-text-color);
+    font-size: 16px;
+    margin-top: 0;
+    margin-left: 16px;
+    padding-left: 12px;
+}
+
+.login-button {
+    width: 250px;
+    height: 45px;
+    background-color: #5964F1;
+    border-radius: 4px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-family: whitney medium;
+}
+
+.banner {
+    width: 452px;
+    height: 298px;
+    color: white;
+    background-color: rgba(163, 18, 237, 0.7); /* Purple color with 70% transparency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+}
