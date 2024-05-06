@@ -13,7 +13,12 @@ db.serialize(() => {
         welcome_message TEXT,
         goodbye_message TEXT,
         welcome_enabled BOOLEAN DEFAULT FALSE,
-        goodbye_enabled BOOLEAN DEFAULT FALSE
+        goodbye_enabled BOOLEAN DEFAULT FALSE,
+
+        xp_gain_chance INTEGER DEFAULT 50,
+        xp_increment_per_level INTEGER DEFAULT 10,
+        initial_xp_for_level_up INTEGER DEFAULT 10,
+        leveling_enabled BOOLEAN DEFAULT TRUE
     )`, (err) => {
         if (err) {
             console.error("Failed to ensure 'servers' table exists:", err.message);

@@ -6,7 +6,6 @@ const { Client, GatewayIntentBits, ActivityType, Events } = require("discord.js"
 require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
 require("./setupDatabase.js");
-const config = require("./config.json");
 
 const client = new Client({
     intents: [
@@ -37,29 +36,51 @@ client.on(Events.ClientReady, () => {
 });
 
 client.on(Events.MessageCreate, async message => {
-    if (!message.author.bot && message.guild) {
-        const random = Math.floor(Math.random() * 100) + 1;
-        if (random <= config.xpGainChance) {
-            const userId = message.author.id;
-            const serverId = message.guild.id;
-
-            db.get(`SELECT xp, level FROM user_xp WHERE user_id = ? AND server_id = ?`, [userId, serverId], (err, row) => {
+    const serverId = message.guild.id;
+    db.get(`SELECT * FROM servers WHERE server_id = ?`, [serverId], (err, row) => {
+        if (err) {
+            console.error('Database error when checking server existence:', err);
+        } else if (!row) {
+            // If the server is not in the database, insert it with default values
+            db.run(`INSERT INTO servers (server_id) VALUES (?)`, [serverId], (err) => {
                 if (err) {
-                    return console.error('Failed to retrieve user data:', err);
-                }
-                let newXp, newLevel;
-                if (!row) {
-                    newXp = 1;
-                    newLevel = 1;
-                    db.run(`INSERT INTO user_xp (user_id, server_id, xp, level) VALUES (?, ?, ?, ?)`, [userId, serverId, newXp, newLevel]);
+                    console.error('Database error when inserting new server:', err);
                 } else {
-                    newXp = row.xp + 1;
-                    const nextLevelXp = config.initialXpForLevelUp + row.level * config.xpIncrementPerLevel;
-                    newLevel = newXp >= nextLevelXp ? row.level + 1 : row.level;
-                    db.run(`UPDATE user_xp SET xp = ?, level = ? WHERE user_id = ? AND server_id = ?`, [newXp, newLevel, userId, serverId]);
+                    console.log(`New server added to the database with ID: ${serverId}`);
                 }
             });
         }
+    });
+    if (!message.author.bot && message.guild) {
+        db.get(`SELECT xp_gain_chance, initial_xp_for_level_up, xp_increment_per_level FROM servers WHERE server_id = ?`, [serverId], (err, config) => {
+            if (err) {
+                return console.error('Failed to retrieve server config:', err);
+            }
+            if (!config) {
+                return console.error('No config found for this server:', serverId);
+            }
+            const random = Math.floor(Math.random() * 100) + 1;
+            if (random <= config.xp_gain_chance) {
+                const userId = message.author.id;
+
+                db.get(`SELECT xp, level FROM user_xp WHERE user_id = ? AND server_id = ?`, [userId, serverId], (err, row) => {
+                    if (err) {
+                        return console.error('Failed to retrieve user data:', err);
+                    }
+                    let newXp, newLevel;
+                    if (!row) {
+                        newXp = 1;
+                        newLevel = 1;
+                        db.run(`INSERT INTO user_xp (user_id, server_id, xp, level) VALUES (?, ?, ?, ?)`, [userId, serverId, newXp, newLevel]);
+                    } else {
+                        newXp = row.xp + 1;
+                        const nextLevelXp = config.initial_xp_for_level_up + row.level * config.xp_increment_per_level;
+                        newLevel = newXp >= nextLevelXp ? row.level + 1 : row.level;
+                        db.run(`UPDATE user_xp SET xp = ?, level = ? WHERE user_id = ? AND server_id = ?`, [newXp, newLevel, userId, serverId]);
+                    }
+                });
+            }
+        });
     }
 });
 
@@ -70,6 +91,22 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const command = commands.get(commandName);
     if (!command) return;
+
+    const serverId = interaction.guild.id;
+    db.get(`SELECT * FROM servers WHERE server_id = ?`, [serverId], (err, row) => {
+        if (err) {
+            console.error('Database error when checking server existence:', err);
+        } else if (!row) {
+            // If the server is not in the database, insert it with default values
+            db.run(`INSERT INTO servers (server_id) VALUES (?)`, [serverId], (err) => {
+                if (err) {
+                    console.error('Database error when inserting new server:', err);
+                } else {
+                    console.log(`New server added to the database with ID: ${serverId}`);
+                }
+            });
+        }
+    });
 
     try {
         await command.execute(interaction);

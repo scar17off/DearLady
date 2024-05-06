@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
-const config = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -36,36 +35,42 @@ module.exports = {
                 db.close();
                 return interaction.reply({ content: 'Failed to retrieve user data.', ephemeral: true });
             }
-            if (!row) {
-                if (action === 'add') {
-                    db.run(`INSERT INTO user_xp (user_id, server_id, xp, level) VALUES (?, ?, ?, ?)`, [user.id, serverId, amount, 1]);
-                } else {
-                    interaction.reply({ content: `No XP to remove from ${user.username}.`, ephemeral: true });
+            db.get(`SELECT initial_xp_for_level_up, xp_increment_per_level FROM servers WHERE server_id = ?`, [serverId], (err, config) => {
+                if (err) {
+                    db.close();
+                    return interaction.reply({ content: 'Failed to retrieve server configuration.', ephemeral: true });
                 }
-            } else {
-                let newXp = action === 'add' ? row.xp + amount : row.xp - amount;
-                let newLevel = row.level;
-                if (newXp < 0) newXp = 0; // Prevent negative XP
-
-                let nextLevelXp = config.initialXpForLevelUp + newLevel * config.xpIncrementPerLevel;
-
-                if (action === 'add') {
-                    while (newXp >= nextLevelXp) {
-                        newXp -= nextLevelXp;
-                        newLevel++;
-                        nextLevelXp = config.initialXpForLevelUp + newLevel * config.xpIncrementPerLevel;
+                if (!row) {
+                    if (action === 'add') {
+                        db.run(`INSERT INTO user_xp (user_id, server_id, xp, level) VALUES (?, ?, ?, ?)`, [user.id, serverId, amount, 1]);
+                    } else {
+                        interaction.reply({ content: `No XP to remove from ${user.username}.`, ephemeral: true });
                     }
                 } else {
-                    while (newXp < config.initialXpForLevelUp && newLevel > 1) {
-                        newLevel--;
-                        newXp += config.initialXpForLevelUp + (newLevel - 1) * config.xpIncrementPerLevel;
-                    }
-                }
+                    let newXp = action === 'add' ? row.xp + amount : row.xp - amount;
+                    let newLevel = row.level;
+                    if (newXp < 0) newXp = 0; // Prevent negative XP
 
-                db.run(`UPDATE user_xp SET xp = ?, level = ? WHERE user_id = ? AND server_id = ?`, [newXp, newLevel, user.id, serverId]);
-            }
-            db.close();
-            interaction.reply({ content: `${action === 'add' ? 'Added' : 'Removed'} ${amount} XP ${action === 'add' ? 'to' : 'from'} ${user.username} and updated their level accordingly.`, ephemeral: true });
+                    let nextLevelXp = config.initial_xp_for_level_up + newLevel * config.xp_increment_per_level;
+
+                    if (action === 'add') {
+                        while (newXp >= nextLevelXp) {
+                            newXp -= nextLevelXp;
+                            newLevel++;
+                            nextLevelXp = config.initial_xp_for_level_up + newLevel * config.xp_increment_per_level;
+                        }
+                    } else {
+                        while (newXp < config.initial_xp_for_level_up && newLevel > 1) {
+                            newLevel--;
+                            newXp += config.initial_xp_for_level_up + (newLevel - 1) * config.xp_increment_per_level;
+                        }
+                    }
+
+                    db.run(`UPDATE user_xp SET xp = ?, level = ? WHERE user_id = ? AND server_id = ?`, [newXp, newLevel, user.id, serverId]);
+                }
+                db.close();
+                interaction.reply({ content: `${action === 'add' ? 'Added' : 'Removed'} ${amount} XP ${action === 'add' ? 'to' : 'from'} ${user.username} and updated their level accordingly.`, ephemeral: true });
+            });
         });
     }
 }
