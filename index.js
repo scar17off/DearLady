@@ -3,7 +3,6 @@ const commandFiles = fs.readdirSync("./commands", { recursive: true }).filter(fi
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 const { Client, GatewayIntentBits, ActivityType, Events } = require("discord.js");
-const { EventEmitterAsyncResource } = require("events");
 require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
 require("./setupDatabase.js");
