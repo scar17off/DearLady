@@ -7,6 +7,8 @@ const fs = require('fs');
 const publicFolders = fs.readdirSync('public');
 const path = require('path');
 require('dotenv').config();
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./botDatabase.db');
 
 const app = express();
 
@@ -73,10 +75,53 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('/');
 }
 
+// dashboard API routes
 app.get('/bot-status', (req, res) => {
     const totalServers = client.guilds.cache.size;
     const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
     res.json({ servers: totalServers, members: totalMembers });
+});
+
+app.get('/get-server-config', ensureAuthenticated, (req, res) => {
+    const serverId = req.query.serverId;
+    const guild = client.guilds.cache.get(serverId);
+    if (!guild) {
+        return res.status(404).send('Server not found');
+    }
+    if (guild.ownerId !== req.user.id) {
+        return res.status(403).send('Unauthorized: You are not the owner of this server');
+    }
+    db.get(`SELECT * FROM servers WHERE server_id = ?`, [serverId], (err, row) => {
+        if (err) {
+            console.error('Failed to retrieve server config:', err);
+            res.status(500).send('Error fetching server configuration');
+        } else {
+            res.json({
+                welcome_enabled: row.welcome_enabled,
+                goodbye_enabled: row.goodbye_enabled
+            });
+        }
+    });
+});
+
+app.post('/update-server-config', ensureAuthenticated, (req, res) => {
+    const { serverId, configKey, configValue } = req.body;
+    const guild = client.guilds.cache.get(serverId);
+    if (!guild) {
+        return res.status(404).send('Server not found');
+    }
+    if (guild.ownerId !== req.user.id) {
+        return res.status(403).send('Unauthorized: You are not the owner of this server');
+    }
+    const sql = `UPDATE servers SET ${configKey} = ? WHERE server_id = ?`;
+    db.run(sql, [configValue, serverId], (err) => {
+        if (err) {
+            console.error('Failed to update server config:', err);
+            res.status(500).send('Error updating server configuration');
+        } else {
+            res.send('Server configuration updated successfully');
+        }
+    });
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

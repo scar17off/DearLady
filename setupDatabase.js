@@ -8,7 +8,12 @@ const db = new sqlite3.Database('./botDatabase.db', (err) => {
 db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS servers (
         server_id TEXT PRIMARY KEY,
-        server_name TEXT NOT NULL
+        welcome_channel NUMBER,
+        goodbye_channel NUMBER,
+        welcome_message TEXT,
+        goodbye_message TEXT,
+        welcome_enabled BOOLEAN DEFAULT FALSE,
+        goodbye_enabled BOOLEAN DEFAULT FALSE
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS users (

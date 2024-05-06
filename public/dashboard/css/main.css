@@ -8,6 +8,11 @@ html, body {
     background-position: center;
 }
 
+:root {
+    --active-text-color: #c3c6c9;
+    --inactive-text-color: #e5e7e9;
+}
+
 @font-face {
     font-family: 'whitney-medium';
     src: url('/login/font/whitney-medium.ttf') format('truetype');
@@ -82,4 +87,80 @@ body {
 #content {
     flex-grow: 1;
     padding: 20px;
+}
+
+#tab-list-header > h1 {
+    color: var(--active-text-color);
+    font-size: 14px;
+    text-align: center;
+}
+
+#tab-list > div:first-child {
+    margin-top: 30px;
+    text-align: center;
+    border-radius: 50%;
+}
+
+#tab-list > div:not(:first-child) {
+    color: var(--inactive-text-color);
+    font-size: 14px;
+    margin-left: 25px;
+}
+
+hr {
+    border: 1px solid #2E3136;
+}
+
+h1:not(:nth-child(2)) {
+    color: white;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.custom-checkbox {
+    display: inline-flex;
+    align-items: center; /* Центрирование элементов по вертикали */
+    width: auto; /* Ширина по содержимому */
+    height: 20px;
+    margin: 5px;
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    cursor: pointer;
+    appearance: none; /* Убрать стандартный стиль */
+    background-color: #1F2126; /* Темный фон */
+    border: 2px solid #4A4E69; /* Темно-серая рамка */
+    border-radius: 5px; /* Скругленные углы */
+    position: relative;
+}
+
+.custom-checkbox .checkmark {
+    display: none;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    height: 32px;
+    width: 32px;
+    background-color: #4A4E69;
+    border-radius: 5px;
+}
+
+.custom-checkbox input:checked + .checkmark {
+    display: block;
+    content: '';
+    width: 11px;
+    height: 18px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 19l-7-7 1.41-1.41L9 16.17l12-12L22.41 5z"/></svg>') no-repeat center;
+    background-size: 50%;
+    background-size: cover;
+}
+
+.custom-checkbox span {
+    margin-left: 5px; /* Отступ текста от чекбокса */
+    color: #C9D1D9; /* Светло-серый цвет текста */
 }

@@ -2,7 +2,7 @@ const fs = require("fs");
 const commandFiles = fs.readdirSync("./commands", { recursive: true }).filter(file => file.endsWith(".js"));
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
-const { Client, GatewayIntentBits, ActivityType } = require("discord.js");
+const { Client, GatewayIntentBits, ActivityType, Events } = require("discord.js");
 require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
 require("./setupDatabase.js");
@@ -29,13 +29,13 @@ function setActivity() {
     client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
 }
 
-client.on("ready", () => {
+client.on(Events.ClientReady, () => {
     require("./server.js");
     setActivity();
     setInterval(setActivity, 600000); // 600000 milliseconds = 10 minutes
 });
 
-client.on("messageCreate", async message => {
+client.on(Events.MessageCreate, async message => {
     if (!message.author.bot && message.guild) {
         const random = Math.floor(Math.random() * 100) + 1;
         if (random <= config.xpGainChance) {
@@ -62,7 +62,7 @@ client.on("messageCreate", async message => {
     }
 });
 
-client.on('interactionCreate', async interaction => {
+client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;
@@ -84,6 +84,14 @@ client.on('interactionCreate', async interaction => {
         console.error(error);
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
+});
+
+client.on(Events.GuildCreate, async guild => {
+    db.run(`INSERT INTO servers (server_id, welcome_enabled, goodbye_enabled) VALUES (?, ?, ?)`, [
+        guild.id,
+        false,
+        false
+    ]);
 });
 
 client.login(process.env.token);

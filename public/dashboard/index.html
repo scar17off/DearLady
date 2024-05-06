@@ -4,15 +4,52 @@
     <link rel="stylesheet" href="/dashboard/css/main.css" type="text/css">
     <link rel="icon" href="/dashboard/img/favicon.ico">
     <title>Dashboard</title>
-    <script src="/dashboard/js/script.js"></script>
 </head>
 
 <body>
     <div id="server-list" style="width: 85px; background-color: #1D1F23;"></div>
-    <div id="tab-list" style="width: 250px; background-color: #1F2126;">
+    <div id="tab-list" style="width: 250px; background-color: #1F2126;" hidden>
+        <div id="tab-list-header">
+            <img id="server-icon" width="84" height="84" alt="logo">
+            <h1 id="server-name">Server name</h1>
+        </div>
+        <hr>
+        <!-- tabs -->
+        <h1>Overview</h1>
         <div id="tab-overview">Overview</div>
+        <div id="tab-settings">Settings</div>
+
+        <h1>Modules</h1>
+        <div id="tab-welcome">Welcome & Goodbye</div>
+        <div id="tab-utility">Utility</div>
+        <div id="tab-moderation">Moderation</div>
+        <div id="tab-fun">Fun</div>
+
+        <!-- overview -->
+        <div id="tab-content-overview" hidden><h1>Overview</h1></div>
+        <div id="tab-content-settings" hidden><h1>Settings</h1></div>
+
+        <!-- modules -->
+        <div id="tab-content-utility" hidden><h1>Utility</h1></div>
+        <div id="tab-content-welcome" hidden>
+            <h1>Welcome & Goodbye</h1>
+            <label class="custom-checkbox" name="welcome_enabled">
+                <input type="checkbox">
+                <span class="checkmark"></span>
+                <span>Welcome</span>
+            </label><br>
+            <label class="custom-checkbox" name="goodbye_enabled">
+                <input type="checkbox">
+                <span class="checkmark"></span>
+                <span>Goodbye</span>
+            </label>
+        </div>
+        <div id="tab-content-moderation" hidden><h1>Moderation</h1></div>
+        <div id="tab-content-fun" hidden><h1>Fun</h1></div>
     </div>
     <div id="content"></div>
+    
+    <script src="/dashboard/js/script.js"></script>
 </body>
 
 </html>
