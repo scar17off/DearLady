@@ -24,12 +24,15 @@ for (const file of commandFiles) {
     commands.set(command.data.name, command);
 }
 
+function setActivity() {
+    const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+    client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
+}
+
 client.on("ready", () => {
     require("./server.js");
-    setInterval(() => {
-        const totalMembers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
-        client.user.setActivity(`over ${client.guilds.cache.size} servers and ${totalMembers} members`, { type: ActivityType.Watching });
-    }, 600000); // 600000 milliseconds = 10 minutes
+    setActivity();
+    setInterval(setActivity, 600000); // 600000 milliseconds = 10 minutes
 });
 
 client.on("messageCreate", async message => {

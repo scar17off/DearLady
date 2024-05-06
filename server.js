@@ -63,7 +63,7 @@ app.get('/auth/discord/callback', passport.authenticate('discord', {
 
 // Provide user data
 app.get('/get-user', ensureAuthenticated, (req, res) => {
-    res.json({ username: req.user.username });
+    res.json(req.user);
 });
 
 function ensureAuthenticated(req, res, next) {
