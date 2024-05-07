@@ -9,6 +9,7 @@ const path = require('path');
 require('dotenv').config();
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -103,6 +104,8 @@ app.get('/get-server-config', ensureAuthenticated, (req, res) => {
         }
     });
 });
+
+app.use(bodyParser.json()); // Middleware to parse JSON bodies
 
 app.post('/update-server-config', ensureAuthenticated, (req, res) => {
     const { serverId, configKey, configValue } = req.body;

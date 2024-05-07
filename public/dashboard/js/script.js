@@ -27,6 +27,16 @@ window.onload = function() {
                 document.getElementById('server-name').innerHTML = guild.name;
                 document.getElementById('server-icon').src = serverDiv.getElementsByTagName("img")[0].src.replace("56", "96");
                 if(document.getElementById("tab-list").hidden) document.getElementById("tab-list").hidden = false;
+
+                // Load server config when a server is selected
+                fetch(`/get-server-config?serverId=${guild.id}`)
+                .then(response => response.json())
+                .then(config => {
+                    document.querySelectorAll('.checkbox-input').forEach(input => {
+                        input.checked = config[input.name] === 1;
+                    });
+                })
+                .catch(error => console.error('Failed to load server config:', error));
             });
             serverDiv.setAttribute('id', `${guild.id}`);
             serverList.appendChild(serverDiv);
@@ -47,11 +57,18 @@ function getServerId() {
     return activeServer ? activeServer.id : null;
 }
 
-function handleCheckboxChange(event) {
-    const checkbox = event.target;
+document.querySelectorAll('.checkbox-input').forEach(input => {
+    console.log(input);
+    input.addEventListener('change', () => {
+        handleCheckboxChange(input);
+    });
+});
+
+function handleCheckboxChange(input) {
+    console.log(input);
     const serverId = getServerId();
-    const key = checkbox.name;
-    const value = checkbox.checked ? 1 : 0;
+    const key = input.parentNode.getAttribute('name');
+    const value = input.checked ? 1 : 0;
 
     if (!serverId) {
         console.error('No server selected');
