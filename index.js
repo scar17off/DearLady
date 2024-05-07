@@ -5,7 +5,7 @@ const db = new sqlite3.Database('./botDatabase.db');
 const { Client, GatewayIntentBits, ActivityType, Events } = require("discord.js");
 require("dotenv").config();
 process.on('uncaughtException', error => console.error('Uncaught Exception:', error));
-require("./setupDatabase.js");
+require("./setup-database.js");
 
 const client = new Client({
     intents: [
