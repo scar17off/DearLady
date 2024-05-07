@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, time, TimestampStyles } = require('discord.js');
 const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('./botDatabase.db');
 
@@ -37,41 +37,52 @@ module.exports = {
                 }
 
                 if (!row) {
-                    return interaction.reply({ content: 'No additional information available for this user.', ephemeral: true });
+                    // If no user data is found, create a new entry with default values
+                    db.run(`INSERT INTO users (user_id, birthday, gender) VALUES (?, ?, ?)`, [member.id, null, 'undefined'], async (err) => {
+                        if (err) {
+                            console.error(err);
+                            return interaction.reply({ content: 'Failed to create user data.', ephemeral: true });
+                        }
+                        // Continue to create the embed with default values
+                        row = { birthday: null, gender: 'undefined' };
+                        await sendUserEmbed(interaction, member, row);
+                    });
+                    return;
                 }
 
-                const birthday = row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
-                const genderEmoji = {
-                    'male': '♂️',
-                    'female': '♀️',
-                    'non-binary': '⚧️'
-                }[row.gender] || '❓';
-
-                const embed = new EmbedBuilder()
-                    .setColor(0xA312ED)
-                    .setTitle(`User Information ${genderEmoji}`)
-                    .setThumbnail(member.user.displayAvatarURL())
-                    .addFields(
-                        { name: 'Username', value: `${member.user.username}#${member.user.discriminator}`, inline: true },
-                        { name: 'ID', value: member.user.id, inline: false },
-                        { name: 'Created At', value: member.user.createdAt.toDateString(), inline: false },
-                        { name: 'Joined At', value: member.joinedAt.toDateString(), inline: false },
-                        { name: 'Birthday', value: birthday, inline: false },
-                        { 
-                            name: "Roles", 
-                            value: member.roles.cache.filter(role => role.name !== '@everyone').map(role => `<@&${role.id}>`).join(', ') || 'N/A', 
-                            inline: false 
-                        },
-                        { name: "Owner", value: member.guild.ownerId === member.id ? 'Yes' : 'No', inline: true }
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: 'User Info', iconURL: member.user.displayAvatarURL() });
-
-                await interaction.reply({ embeds: [embed], ephemeral: true });
+                await sendUserEmbed(interaction, member, row);
             });
         } catch (error) {
             console.error(error);
             await interaction.reply({ content: 'An error occurred while fetching user data.', ephemeral: true });
         }
     }
+}
+
+async function sendUserEmbed(interaction, member, row) {
+    const birthday = row.birthday ? new Date(row.birthday).toDateString() : 'N/A';
+    const genderEmoji = {
+        'male': '♂️',
+        'female': '♀️',
+        'non-binary': '⚧️'
+    }[row.gender] || '❓';
+
+    const embed = new EmbedBuilder()
+        .setColor(0xA312ED)
+        .setTitle(`User Information ${genderEmoji}`)
+        .setThumbnail(member.user.displayAvatarURL())
+        .setDescription(
+            `**General**\n` +
+            `├ <:members:1237302366001434635> Username: ${member.user.username}#${member.user.discriminator}\n` +
+            `├ <:id:1237302366001434635> ID: ${member.user.id}\n` +
+            `├ <:calendar:1237300555685302303> Created At: ${time(member.user.createdAt, TimestampStyles.LongDateTime)}\n` +
+            `├ <:calendar:1237300555685302303> Joined At: ${time(member.joinedAt, TimestampStyles.LongDateTime)}\n` +
+            `├ <:birthday:1237300622852886582> Birthday: ${birthday}\n` +
+            `├ <:roles:1237300229431365663> Roles: ${member.roles.cache.filter(role => role.name !== '@everyone').map(role => `<@&${role.id}>`).join(', ') || 'N/A'}\n` +
+            `└ <:owner:1237300483291353128> Owner: ${member.guild.ownerId === member.id ? 'Yes' : 'No'}`
+        )
+        .setTimestamp()
+        .setFooter({ text: 'User Info', iconURL: member.user.displayAvatarURL() });
+
+    await interaction.reply({ embeds: [embed], ephemeral: true });
 }

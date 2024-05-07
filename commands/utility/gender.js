@@ -26,7 +26,7 @@ module.exports = {
             if (!row) {
                 // Assuming username is required and should be fetched from interaction
                 const username = interaction.user.username;
-                db.run(`INSERT INTO users (user_id, username, gender) VALUES (?, ?, ?)`, [userId, username, gender], (err) => {
+                db.run(`INSERT INTO users (user_id, gender) VALUES (?, ?)`, [userId, gender], (err) => {
                     if (err) {
                         console.error(err);
                         return interaction.reply({ content: 'Failed to add user to database.', ephemeral: true });

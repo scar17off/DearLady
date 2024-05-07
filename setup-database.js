@@ -29,7 +29,6 @@ db.serialize(() => {
 
     db.run(`CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
-        username TEXT NOT NULL,
         birthday DATE,
         gender TEXT
     )`, (err) => {

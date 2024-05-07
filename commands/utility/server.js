@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder, ChannelType } = require('discord.js');
+const { EmbedBuilder, ChannelType, time, TimestampStyles } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -16,7 +16,7 @@ module.exports = {
                 `├ <:boost:1237300801446350858> Boosts: ${server.premiumSubscriptionCount}\n` +
                 `├ <:roles:1237300229431365663> Roles: ${server.roles.cache.size}\n` +
                 `├ <:verification:1237300258585841706> Verification: ${server.verificationLevel}\n` +
-                `└ <:calendar:1237300555685302303> Created: ${server.createdAt.toDateString()}\n` +
+                `└ <:calendar:1237300555685302303> Created: ${time(server.createdAt, TimestampStyles.LongDateTime)}\n` +
                 `**Channels**\n` +
                 `├ <:text:1237300390337187861> Channels: ${server.channels.cache.size}\n` +
                 `├ <:text:1237300390337187861> Text: ${server.channels.cache.filter(c => c.type === ChannelType.GuildText).size}\n` +
